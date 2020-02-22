@@ -1,3 +1,4 @@
+const DAY_STRING = ['день', 'дня', 'дней'];
 const DATA = {
     whichSite:['landing', 'multiPage', 'onlineStore'],
     price:[4000, 8000, 26000],
@@ -21,8 +22,15 @@ let totalPriceSum = document.querySelector('.total_price__sum'),
 adapt = document.getElementById('adapt'),
 mobileTemplates = document.getElementById('mobileTemplates'),
 typeSite = document.querySelector('.type-site'),
-maxDeadline = document.querySelector('.max-deadline');
+maxDeadline = document.querySelector('.max-deadline'),
+minDeadlineDay = '',
+rangeDeadline = document.querySelector('.range-deadline'),
+deadlineValue = document.querySelector('.deadline-value');
 
+function declOfNum(n, titles) {
+    return n+ ' ' +titles[n % 10 === 1 && n % 100 !== 11 ?
+                  0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
+  }
 
 function showEl(el){
     el.style.display = 'block';
@@ -31,10 +39,14 @@ function hideEl(el){
     el.style.display = 'none';
 }
 
-function renderTextContent(total, site, maxDay){
+function renderTextContent(total, site, maxDay, minDay){
     totalPriceSum.textContent = total;
     typeSite.textContent = site;
-    maxDeadline.textContent = maxDay;
+    maxDeadline.textContent = declOfNum(maxDay, DAY_STRING);
+    rangeDeadline.min = minDay;
+    rangeDeadline.max = maxDay;
+    deadlineValue.textContent = declOfNum(rangeDeadline.value, DAY_STRING);
+    console.log(maxDeadline.textContent, maxDay);
 }
 
 function priceCalculation(el){
@@ -43,6 +55,7 @@ function priceCalculation(el){
     options = [],
     site = '',
     maxDeadlineDay = DATA.deadlineDay[index][1];
+    minDeadlineDay = DATA.deadlineDay[index][0];
 
     if(el.name === 'whichSite'){
         for(const item of formCalculate.elements){
@@ -59,6 +72,7 @@ function priceCalculation(el){
              index = (DATA.whichSite.indexOf(item.value));
              site = item.dataset.site;
              maxDeadlineDay = DATA.deadlineDay[index][1];
+             minDeadlineDay = DATA.deadlineDay[index][0];
         }else if(item.classList.contains('calc-handler') && item.checked){
             options.push(item.value);
         }
@@ -82,7 +96,7 @@ function priceCalculation(el){
      );
 
      result += DATA.price[index];
-     renderTextContent(result, site, maxDeadlineDay);
+     renderTextContent(result, site, maxDeadlineDay, minDeadlineDay);
      totalPriceSum.textContent = result;
 }
 function handlerCallbackForm(event){
