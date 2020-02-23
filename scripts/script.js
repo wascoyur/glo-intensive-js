@@ -74,8 +74,9 @@ function priceCalculation(el){
     options = [],
     site = '',
     
-    maxDeadlineDay = DATA.deadlineDay[index][1];
-    minDeadlineDay = DATA.deadlineDay[index][0];
+    maxDeadlineDay = DATA.deadlineDay[index][1],
+    minDeadlineDay = DATA.deadlineDay[index][0],
+    overPercent = 0;
 
     if(el.name === 'whichSite'){
         for(const item of formCalculate.elements){
@@ -95,9 +96,13 @@ function priceCalculation(el){
              minDeadlineDay = DATA.deadlineDay[index][0];
         }else if(item.classList.contains('calc-handler') && item.checked){
             options.push(item.value);
+        } else if(item.classList.contains('want-faster') && item.checked){
+            const overDay = maxDeadlineDay - rangeDeadline.value;
+            overPercent = overDay * (DATA.deadlinePercent[index] / 100);
         }
     }
     
+    result += DATA.price[index];
      options.forEach(function(key){
          if(typeof (DATA[key]) === 'number'){
              if (key === 'sendorder') {
@@ -115,9 +120,12 @@ function priceCalculation(el){
      }
      );
 
-     result += DATA.price[index];
+     result += result * overPercent;
+     
+    //  console.log (result +result * overPercent);
+
      renderTextContent(result, site, maxDeadlineDay, minDeadlineDay);
-     totalPriceSum.textContent = result;
+    //   totalPriceSum.textContent = result;
 }
 function handlerCallbackForm(event){
     let target = event.target;
@@ -130,12 +138,10 @@ function handlerCallbackForm(event){
     }
 
     if (target.classList.contains('want-faster')){
-        if(target.checked){
-            showEl(fastRange);
-        }else{
-            hideEl('fastRange');
-        }
+        target.checked ? showEl(fastRange) : hideEl(fastRange);
+        priceCalculation(target);
     }
+
     if(target.classList.contains('calc-handler')){
         priceCalculation(target);
     }
