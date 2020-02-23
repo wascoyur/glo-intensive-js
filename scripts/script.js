@@ -18,12 +18,18 @@ let formCalculate = document.querySelector('.form-calculate');
 let endButton = document.querySelector('.end-button');
 let total = document.querySelector('.total');
 let fastRange = document.querySelector('.fast-range');
-let totalPriceSum = document.querySelector('.total_price__sum'),
+const totalPriceSum = document.querySelector('.total_price__sum'),
 adapt = document.getElementById('adapt'),
-mobileTemplates = document.getElementById('mobileTemplates'),
+mobileTemplates = document.getElementById('mobileTemplates'),  
+desctopTemplates = document.getElementById('desktopTemplates'),  
+editable = document.getElementById('editable'),  
+mobileTemplatesValue = document.querySelector('.mobileTemplates_value'),  
+desctopTemplatesValue = document.querySelector('.desktopTemplates_value'),  
+adaptValue = document.querySelector('.adapt_value'),
+editableValue = document.querySelector('.editable_value'),  
 typeSite = document.querySelector('.type-site'),
 maxDeadline = document.querySelector('.max-deadline'),
-minDeadlineDay = '',
+
 rangeDeadline = document.querySelector('.range-deadline'),
 deadlineValue = document.querySelector('.deadline-value');
 
@@ -46,14 +52,28 @@ function renderTextContent(total, site, maxDay, minDay){
     rangeDeadline.min = minDay;
     rangeDeadline.max = maxDay;
     deadlineValue.textContent = declOfNum(rangeDeadline.value, DAY_STRING);
-    console.log(maxDeadline.textContent, maxDay);
-}
+    // console.log(maxDeadline.textContent, maxDay);
 
+    adaptValue.textContent = adapt.checked ? 'Да' : 'Нет';
+    mobileTemplatesValue.textContent = mobileTemplates.checked ? 'Да' : 'Нет';
+    desctopTemplatesValue.textContent = desctopTemplates.checked ? 'Да' : 'Нет';
+    editableValue.textContent = editable.checked ? 'Да' : 'Нет';
+    /* console.log(
+        desctopTemplatesValue.checked,
+        mobileTemplatesValue
+        // adapt.checked,
+        // mobileTemplates.checked,
+        // desctopTemplates.checked,
+        //  editable.checked
+    ); */
+}
+let minDeadlineDay = '';
 function priceCalculation(el){
     let result = 0;
     let index = 0,
     options = [],
     site = '',
+    
     maxDeadlineDay = DATA.deadlineDay[index][1];
     minDeadlineDay = DATA.deadlineDay[index][0];
 
