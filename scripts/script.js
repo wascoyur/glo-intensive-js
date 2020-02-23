@@ -31,8 +31,15 @@ typeSite = document.querySelector('.type-site'),
 maxDeadline = document.querySelector('.max-deadline'),
 
 rangeDeadline = document.querySelector('.range-deadline'),
-deadlineValue = document.querySelector('.deadline-value');
-
+deadlineValue = document.querySelector('.deadline-value'),
+calcDescription = document.querySelector('.calc-description'),
+metrikaYandex = document.getElementById('metrikaYandex'),
+analyticsGoogle = document.getElementById('analyticsGoogle'),
+sendOrder = document.getElementById('sendOrder'),
+cardHead = document.querySelector('.card-head'),
+totalPrice = document.querySelector('.total_price'),
+firstFieldset = document.querySelector('.first-fieldset')
+;
 function declOfNum(n, titles) {
     return n+ ' ' +titles[n % 10 === 1 && n % 100 !== 11 ?
                   0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
@@ -43,6 +50,35 @@ function showEl(el){
 }
 function hideEl(el){
     el.style.display = 'none';
+}
+function dopOptionsString(){
+    let str = '';
+    if (metrikaYandex.checked || analyticsGoogle.checked || sendOrder.checked) {
+        str += 'Подключим';
+
+        if (metrikaYandex.checked) {
+            str += ' Яндекс Метрику';
+            if (analyticsGoogle.checked && sendOrder.checked) {
+                str+=', Гугл Алалитику и отравку заявок на почту.';
+                return;
+            }
+            if(analyticsGoogle.checked || sendOrder.checked){
+                str += ' и';
+            }
+        }
+        if(analyticsGoogle.checked){
+                str += ' Гугл Аналитику';
+                if(sendOrder.checked){
+                    str += ' и';
+                }
+        }
+        if(sendOrder.checked){
+            str += ' отравку заявок на почту';
+        }
+        str += '.';
+    }
+
+    return str;
 }
 
 function renderTextContent(total, site, maxDay, minDay){
@@ -58,6 +94,14 @@ function renderTextContent(total, site, maxDay, minDay){
     mobileTemplatesValue.textContent = mobileTemplates.checked ? 'Да' : 'Нет';
     desctopTemplatesValue.textContent = desctopTemplates.checked ? 'Да' : 'Нет';
     editableValue.textContent = editable.checked ? 'Да' : 'Нет';
+    calcDescription.textContent = `
+    Сделаем ${site} ${adapt.checked ? ', адаптированный под мобильные устройства и планшеты' : '' }
+    . 
+    ${editable.checked ?`Установим панель админстратора,
+     чтобы вы могли самостоятельно менять содержание на сайте без разработчика.`:''} 
+    ${dopOptionsString()}
+    					
+    `;
     /* console.log(
         desctopTemplatesValue.checked,
         mobileTemplatesValue
@@ -68,7 +112,7 @@ function renderTextContent(total, site, maxDay, minDay){
     ); */
 }
 let minDeadlineDay = '';
-function priceCalculation(el){
+function priceCalculation(el = {}){
     let result = 0;
     let index = 0,
     options = [],
@@ -146,9 +190,26 @@ function handlerCallbackForm(event){
         priceCalculation(target);
     }
 }
+function moveBackTotal(){
+    if (document.documentElement.getBoundingClientRect().bottom > document.documentElement.clientHeight +200){
+        totalPrice.classList.remove('totalPriceBottom');
+        firstFieldset.after(totalPrice);
+        window.removeEventListener('scroll',  moveBackTotal);
+        window.addEventListener('scroll', moveTotal);
+    }
+}
+function moveTotal(){
+    if (document.documentElement.getBoundingClientRect().bottom < document.documentElement.clientHeight +200){
+        totalPrice.classList.add('totalPriceBottom');
+        endButton.before(totalPrice);
+        window.removeEventListener('scroll', moveTotal);
+        window.addEventListener('scroll',  moveBackTotal);
+    }
+}
 startButton.addEventListener('click', function() {
     showEl(mainForm);
     hideEl(firstScreen);
+    window.addEventListener('scroll', moveTotal);
 } );
 endButton.addEventListener('click', function() {
     // console.log(formCalculate.elements);
@@ -157,6 +218,10 @@ endButton.addEventListener('click', function() {
             hideEl(element);
         }
     }
+
+    cardHead.textContent = 'Заявка на разработку сайта';
+    hideEl(totalPrice);
     showEl(total);
 } );
 formCalculate.addEventListener('change', handlerCallbackForm);
+priceCalculation();
