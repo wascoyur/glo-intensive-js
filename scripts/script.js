@@ -1,3 +1,4 @@
+'use strict';
 const DAY_STRING = ['день', 'дня', 'дней'];
 const DATA = {
     whichSite:['landing', 'multiPage', 'onlineStore'],
@@ -40,18 +41,16 @@ cardHead = document.querySelector('.card-head'),
 totalPrice = document.querySelector('.total_price'),
 firstFieldset = document.querySelector('.first-fieldset')
 ;
-function declOfNum(n, titles) {
-    return n+ ' ' +titles[n % 10 === 1 && n % 100 !== 11 ?
+const  declOfNum = (n, titles)=>
+     n+ ' ' +titles[n % 10 === 1 && n % 100 !== 11 ?
                   0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
-  }
+  
 
-function showEl(el){
-    el.style.display = 'block';
-}
-function hideEl(el){
-    el.style.display = 'none';
-}
-function dopOptionsString(){
+const showEl = (el) =>    el.style.display = 'block';
+
+const hideEl = (el) => el.style.display = 'none';
+
+const dopOptionsString = () =>{
     let str = '';
     if (metrikaYandex.checked || analyticsGoogle.checked || sendOrder.checked) {
         str += 'Подключим';
@@ -60,7 +59,7 @@ function dopOptionsString(){
             str += ' Яндекс Метрику';
             if (analyticsGoogle.checked && sendOrder.checked) {
                 str+=', Гугл Алалитику и отравку заявок на почту.';
-                return;
+                return str;
             }
             if(analyticsGoogle.checked || sendOrder.checked){
                 str += ' и';
@@ -79,9 +78,9 @@ function dopOptionsString(){
     }
 
     return str;
-}
+};
 
-function renderTextContent(total, site, maxDay, minDay){
+const renderTextContent = (total, site, maxDay, minDay) =>{
     totalPriceSum.textContent = total;
     typeSite.textContent = site;
     maxDeadline.textContent = declOfNum(maxDay, DAY_STRING);
@@ -110,9 +109,10 @@ function renderTextContent(total, site, maxDay, minDay){
         // desctopTemplates.checked,
         //  editable.checked
     ); */
-}
+};
 let minDeadlineDay = '';
-function priceCalculation(el = {}){
+
+const priceCalculation = (el = {}) => {
     let result = 0;
     let index = 0,
     options = [],
@@ -170,8 +170,8 @@ function priceCalculation(el = {}){
 
      renderTextContent(result, site, maxDeadlineDay, minDeadlineDay);
     //   totalPriceSum.textContent = result;
-}
-function handlerCallbackForm(event){
+};
+const handlerCallbackForm = (event) =>{
     let target = event.target;
 
     if (adapt.checked) {
@@ -189,29 +189,29 @@ function handlerCallbackForm(event){
     if(target.classList.contains('calc-handler')){
         priceCalculation(target);
     }
-}
-function moveBackTotal(){
+}; 
+const moveBackTotal = () =>{
     if (document.documentElement.getBoundingClientRect().bottom > document.documentElement.clientHeight +200){
         totalPrice.classList.remove('totalPriceBottom');
         firstFieldset.after(totalPrice);
         window.removeEventListener('scroll',  moveBackTotal);
         window.addEventListener('scroll', moveTotal);
     }
-}
-function moveTotal(){
+};
+const moveTotal = ()=>{
     if (document.documentElement.getBoundingClientRect().bottom < document.documentElement.clientHeight +200){
         totalPrice.classList.add('totalPriceBottom');
         endButton.before(totalPrice);
         window.removeEventListener('scroll', moveTotal);
         window.addEventListener('scroll',  moveBackTotal);
     }
-}
-startButton.addEventListener('click', function() {
+};
+startButton.addEventListener('click', () => {
     showEl(mainForm);
     hideEl(firstScreen);
     window.addEventListener('scroll', moveTotal);
 } );
-endButton.addEventListener('click', function() {
+endButton.addEventListener('click', ()=> {
     // console.log(formCalculate.elements);
     for(const element of formCalculate.elements){
         if(element.tagName === 'FIELDSET'){
